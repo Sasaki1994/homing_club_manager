@@ -162,10 +162,10 @@ class LineBotController < ApplicationController
         body = request.body.read
         signature = request.env['HTTP_X_LINE_SIGNATURE']
         # p client.validate_signature(body, signature)
-        unless client.validate_signature(body, signature)
+        unless self.client.validate_signature(body, signature)
           head :BadRequest
         end
-        events = client.parse_events_from(body)
+        events = self.client.parse_events_from(body)
     
         events.each do |event|
         
@@ -193,7 +193,7 @@ class LineBotController < ApplicationController
             type: 'text',
             text: message_text,
           }
-      client.push_message(line_id, message)
+      self.client.push_message(line_id, message)
     end
 
     def reply(reply_token, message_text)
@@ -201,7 +201,7 @@ class LineBotController < ApplicationController
         type: 'text',
         text: message_text
       }
-      client.reply_message(reply_token, message)
+      self.client.reply_message(reply_token, message)
     end
 
     def self.get_rich_menu(name)
