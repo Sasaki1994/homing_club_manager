@@ -6,8 +6,9 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     def basic_action
         omniauth = request.env['omniauth.auth']
         @user = User.find_by(line_id: omniauth['uid'])
-
-        User.create(line_id: omniauth['uid']) unless @user.present?
+        p omniauth['uid']
+        line_id = omniauth['uid']
+        @user = User.create(line_id: line_id) unless @user.present?
         sign_in(@user)
         redirect_to root_path    
     end

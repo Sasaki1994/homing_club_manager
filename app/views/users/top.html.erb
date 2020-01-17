@@ -1,1 +1,5 @@
-<%= link_to "LINE Login", user_line_omniauth_authorize_path %>
+<%= form_for @user, url: users_update_path do |form| %>
+    <%= form.label "最寄り駅" %> <%= form.text_field :home_station, class: :home_station %>
+    <%= form.label :description %> <%= form.number_field :time_for_station, class: :time_for_station %>
+    <%= form.submit "変更" %>
+<% end %>

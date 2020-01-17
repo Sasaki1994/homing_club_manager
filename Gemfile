@@ -69,3 +69,7 @@ gem 'line-bot-api'
 gem 'omniauth-line'
 gem 'devise'
 gem 'mechanize'
+gem 'whenever', :require => false
+group :production do
+  gem 'rails_12factor'
+end
