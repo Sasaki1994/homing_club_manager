@@ -34,11 +34,11 @@ class LineBotController < ApplicationController
           elsif event.message['type'] == "location" then
             address = event.message['address']
             if user.is_last_train
-                self.change_rich_menu(user.line_id, @@alert_richmenu_id)
+                self.class.change_rich_menu(user.line_id, @@alert_richmenu_id)
                 message = user.get_go_home_message(key_message=address)
                 user.update(is_last_train: false)
             else
-                self.change_rich_menu(user.line_id, @@norm_richmenu_id)
+                self.class.change_rich_menu(user.line_id, @@norm_richmenu_id)
                 message = user.get_go_home_message(key_message=address)
             end
             reply(event['replyToken'], message)
@@ -85,32 +85,32 @@ class LineBotController < ApplicationController
                 user.update(alert_at: nil, is_last_train: false)
                 user_ids << user.line_id
             end
-            client.multicast(user_ids, "終電間近です！")
+            @@client.multicast(user_ids, "終電間近です！")
         end
     end
 
     def self.set_rich_menu(name, filename)
         
         rich_menu = self.get_rich_menu(name)
-        res = JSON.parse(client.create_rich_menu(rich_menu).body)
+        res = JSON.parse(@@client.create_rich_menu(rich_menu).body)
         
         begin
             # エラーを起こす可能性のあるコード
             File.open(Rails.public_path + filename, "r") do |file|
-            client.create_rich_menu_image(res["richMenuId"], file)
+            @@client.create_rich_menu_image(res["richMenuId"], file)
             end
             # 例外オブジェクトを変数 error に代入
         rescue => error
             # 変数の値を表示
-            client.delete_rich_menu(res["richMenuId"])
+            @@client.delete_rich_menu(res["richMenuId"])
             puts error
         end
-        client.set_default_rich_menu(res["richMenuId"])
+        @@client.set_default_rich_menu(res["richMenuId"])
     end
 
     def self.delete_rich_menu
         
-        rich_menus = JSON.parse(client.get_rich_menus.body)["richmenus"]
+        rich_menus = JSON.parse(@@client.get_rich_menus.body)["richmenus"]
         i = 1
         p rich_menus
         rich_menus.each do |rich_menu|
@@ -119,9 +119,9 @@ class LineBotController < ApplicationController
             i+= 1
         end
         input = gets.to_i
-        client.delete_rich_menu(rich_menus[input-1]["richMenuId"])
+        @@client.delete_rich_menu(rich_menus[input-1]["richMenuId"])
         
-        rich_menus = JSON.parse(client.get_rich_menus.body)["richmenus"]
+        rich_menus = JSON.parse(@@client.get_rich_menus.body)["richmenus"]
         i = 1
         rich_menus.each do |rich_menu|
 
@@ -131,7 +131,7 @@ class LineBotController < ApplicationController
     end
 
     def self.set_default_rich_menu
-        client.set_default_rich_menu("richmenu-f5970ae73b217ebac57c44f1f73539e2")
+        @@client.set_default_rich_menu("richmenu-f5970ae73b217ebac57c44f1f73539e2")
     end
 
 
@@ -198,7 +198,7 @@ class LineBotController < ApplicationController
             type: 'text',
             text: message_text,
           }
-      self.client.push_message(line_id, message)
+      @@client.push_message(line_id, message)
     end
 
     def reply(reply_token, message_text)
@@ -206,7 +206,7 @@ class LineBotController < ApplicationController
         type: 'text',
         text: message_text
       }
-      self.client.reply_message(reply_token, message)
+      @@client.reply_message(reply_token, message)
     end
 
     def self.get_rich_menu(name)
@@ -309,10 +309,10 @@ class LineBotController < ApplicationController
     
 
     #linebotクライアント情報の取得
-    def self.client
-        @@client ||= Line::Bot::Client.new { |config|
-          config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
-          config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
-        }
-    end
+    # def self.client
+    #     @@client ||= Line::Bot::Client.new { |config|
+    #       config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
+    #       config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
+    #     }
+    # end
 end
