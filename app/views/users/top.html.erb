@@ -1,5 +1,6 @@
 <%= form_for @user, url: users_update_path do |form| %>
-    <%= form.label "最寄り駅" %> <%= form.text_field :home_station, class: :home_station %>
-    <%= form.label :description %> <%= form.number_field :time_for_station, class: :time_for_station %>
-    <%= form.submit "変更" %>
+    <p><%= form.label "最寄り駅" %></p>
+    <p><%= form.text_field :home_station, class: :home_station %></p>
+    <p><%= form.label "家から最寄り駅まで" %> <%= form.number_field :time_for_station, class: :time_for_station %></p>
+    <p><%= form.submit "変更" %></p>
 <% end %>
