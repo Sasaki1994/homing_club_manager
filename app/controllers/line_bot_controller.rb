@@ -3,10 +3,10 @@ class LineBotController < ApplicationController
     require 'json'
     protect_from_forgery :except => [:callback, :test]
 
-    @@regis_richmenu_id = Menu.find_by(label: "regist")
-    @@loc_richmenu_id =  Menu.find_by(label: "loc")
-    @@norm_richmenu_id = Menu.find_by(label: "norm")
-    @@alert_richmenu_id = Menu.find_by(label: "alert")
+    @@regis_richmenu_id = Menu.find_by(label: "regist").menu_id
+    @@loc_richmenu_id =  Menu.find_by(label: "loc").menu_id
+    @@norm_richmenu_id = Menu.find_by(label: "norm").menu_id
+    @@alert_richmenu_id = Menu.find_by(label: "alert").menu_id
     @@client ||= Line::Bot::Client.new { |config|
       config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
       config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
