@@ -268,26 +268,26 @@ class LineBotController < ApplicationController
 
         if type == "regist" then
 
-        rich_menu = {
-            "size": {
-              "width": 2500,
-              "height": 843
-            },
-            "selected": false,
-            "name": name,
-            "chatBarText":"モード選択",
-            "areas": [
-              {
-                "bounds": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 2500,
-                  "height": 843
-                },
-                "action": regist_actions[0]
+          rich_menu = {
+              "size": {
+                "width": 2500,
+                "height": 843
               },
-            ]
-          }
+              "selected": false,
+              "name": name,
+              "chatBarText":"モード選択",
+              "areas": [
+                {
+                  "bounds": {
+                    "x": 0,
+                    "y": 0,
+                    "width": 2500,
+                    "height": 843
+                  },
+                  "action": regist_actions[0]
+                },
+              ]
+            }
 
         elsif type == "loc" then
           rich_menu = {
@@ -361,7 +361,7 @@ class LineBotController < ApplicationController
                   }
                 ]
               }
-            elsif type == "alert" then
+          elsif type == "alert" then
 
               rich_menu = {
                   "size": {
@@ -401,6 +401,7 @@ class LineBotController < ApplicationController
                     }
                   ]
                 }
+          end
         return rich_menu
     end
 
