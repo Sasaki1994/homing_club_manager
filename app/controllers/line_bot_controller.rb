@@ -3,10 +3,10 @@ class LineBotController < ApplicationController
     require 'json'
     protect_from_forgery :except => [:callback, :test]
 
-    @@regis_richmenu_id = "richmenu-f5970ae73b217ebac57c44f1f73539e2"
-    @@loc_richmenu_id =  "richmenu-88e51938cae62d1eb6f2d6861b457866"
-    @@norm_richmenu_id = "richmenu-5e99b91c78df5c5307c835b5f18afbaa"
-    @@alert_richmenu_id = "richmenu-80b4cc0ef167ef96ca3fef8dd76fa014"
+    @@regis_richmenu_id = Menu.find_by(label: "regist")
+    @@loc_richmenu_id =  Menu.find_by(label: "loc")
+    @@norm_richmenu_id = Menu.find_by(label: "norm")
+    @@alert_richmenu_id = Menu.find_by(label: "alert")
     @@client ||= Line::Bot::Client.new { |config|
       config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
       config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
@@ -89,9 +89,12 @@ class LineBotController < ApplicationController
         end
     end
 
-    def self.set_rich_menu(name, filename)
+    def self.set_rich_menu(name, filename, type)
+      """
+      type: regist, loc, norm, alert
+      """
         
-        rich_menu = self.get_rich_menu(name)
+        rich_menu = self.get_rich_menu(name, type)
         res = JSON.parse(@@client.create_rich_menu(rich_menu).body)
         
         begin
@@ -105,7 +108,11 @@ class LineBotController < ApplicationController
             @@client.delete_rich_menu(res["richMenuId"])
             puts error
         end
-        @@client.set_default_rich_menu(res["richMenuId"])
+        @@client.set_default_rich_menu(res["richMenuId"]) if type == "regist"
+          
+        menu = Menu.find_or_initialize_by(label: type)
+        menu.update(menu_id: res["richMenuId"]) 
+          
     end
 
     def self.delete_rich_menu
@@ -128,10 +135,6 @@ class LineBotController < ApplicationController
             puts "[#{i.to_s}] #{rich_menu["name"]}"
             i+= 1
         end
-    end
-
-    def self.set_default_rich_menu
-        @@client.set_default_rich_menu("richmenu-f5970ae73b217ebac57c44f1f73539e2")
     end
 
 
@@ -209,9 +212,7 @@ class LineBotController < ApplicationController
       @@client.reply_message(reply_token, message)
     end
 
-    def self.get_rich_menu(name)
-
-        
+    def self.get_rich_menu(name, type)
 
         regist_actions =[{
             "type": "uri",
@@ -263,7 +264,9 @@ class LineBotController < ApplicationController
                 "data": "cancel"
             },
         ]
-    
+
+
+        if type == "regist" then
 
         rich_menu = {
             "size": {
@@ -283,26 +286,121 @@ class LineBotController < ApplicationController
                 },
                 "action": regist_actions[0]
               },
-            #   {
-            #     "bounds": {
-            #       "x": 1250,
-            #       "y": 0,
-            #       "width": 1250,
-            #       "height": 843
-            #     },
-            #     "action": location_actions[1]
-            #   },
-            #   {
-            #     "bounds": {
-            #       "x": 1666,
-            #       "y": 0,
-            #       "width": 834,
-            #       "height": 843
-            #     },
-            #     "action": alert_actions[2]
-            #   }
             ]
           }
+
+        elsif type == "loc" then
+          rich_menu = {
+            "size": {
+              "width": 2500,
+              "height": 843
+            },
+            "selected": false,
+            "name": name,
+            "chatBarText":"モード選択",
+            "areas": [
+              {
+                "bounds": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1250,
+                  "height": 843
+                },
+                "action": location_actions[0]
+              },
+              {
+                "bounds": {
+                  "x": 1250,
+                  "y": 0,
+                  "width": 1250,
+                  "height": 843
+                },
+                "action": location_actions[1]
+              },
+              {
+            ]
+          }
+
+        elsif type == "norm" then
+
+            rich_menu = {
+                "size": {
+                  "width": 2500,
+                  "height": 843
+                },
+                "selected": false,
+                "name": name,
+                "chatBarText":"モード選択",
+                "areas": [
+                  {
+                    "bounds": {
+                      "x": 0,
+                      "y": 0,
+                      "width": 833,
+                      "height": 843
+                    },
+                    "action": normal_actions[0]
+                  },
+                  {
+                    "bounds": {
+                      "x": 833,
+                      "y": 0,
+                      "width": 833,
+                      "height": 843
+                    },
+                    "action": normal_actions[1]
+                  },
+                  {
+                    "bounds": {
+                      "x": 1666,
+                      "y": 0,
+                      "width": 834,
+                      "height": 843
+                    },
+                    "action": normal_actions[2]
+                  }
+                ]
+              }
+            elsif type == "alert" then
+
+              rich_menu = {
+                  "size": {
+                    "width": 2500,
+                    "height": 843
+                  },
+                  "selected": false,
+                  "name": name,
+                  "chatBarText":"アラート設定中",
+                  "areas": [
+                    {
+                      "bounds": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 833,
+                        "height": 843
+                      },
+                      "action": alert_actions[0]
+                    },
+                    {
+                      "bounds": {
+                        "x": 833,
+                        "y": 0,
+                        "width": 833,
+                        "height": 843
+                      },
+                      "action": alert_actions[1]
+                    },
+                    {
+                      "bounds": {
+                        "x": 1666,
+                        "y": 0,
+                        "width": 834,
+                        "height": 843
+                      },
+                      "action": alert_actions[2]
+                    }
+                  ]
+                }
         return rich_menu
     end
 
