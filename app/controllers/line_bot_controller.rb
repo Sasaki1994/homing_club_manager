@@ -7,6 +7,7 @@ class LineBotController < ApplicationController
     @@loc_richmenu_id =  "richmenu-88e51938cae62d1eb6f2d6861b457866"
     @@norm_richmenu_id = "richmenu-5e99b91c78df5c5307c835b5f18afbaa"
     @@alert_richmenu_id = "richmenu-80b4cc0ef167ef96ca3fef8dd76fa014"
+    URL = "https://homing-club-manager.herokuapp.com/"
 
 
     #メッセージ受信時の処理とレスポンス
@@ -40,7 +41,7 @@ class LineBotController < ApplicationController
           end
 
         else
-          reply(event['replyToken'], "登録してください。 URL:")
+          reply(event['replyToken'], "登録してください。 URL: #{URL}")
         end
 
         head :ok
@@ -205,11 +206,11 @@ class LineBotController < ApplicationController
 
     def self.get_rich_menu(name)
 
-        url = "https://56489efb.ngrok.io"
+        
 
         regist_actions =[{
             "type": "uri",
-            "uri": url
+            "uri": URL
         }]
 
         normal_actions=[
@@ -225,7 +226,7 @@ class LineBotController < ApplicationController
 
         {
             "type": "uri",
-            "uri": url
+            "uri": URL
         }
         ]
 
