@@ -317,10 +317,10 @@ class LineBotController < ApplicationController
                 },
                 "action": location_actions[1]
               },
-              {
+              
             ]
           }
-         }
+         
 
         elsif type == "norm" then
 
@@ -362,7 +362,7 @@ class LineBotController < ApplicationController
                   }
                 ]
               }
-            }
+            
           elsif type == "alert" then
 
               rich_menu = {
@@ -403,7 +403,7 @@ class LineBotController < ApplicationController
                     }
                   ]
                 }
-              }
+              
           end
         return rich_menu
     end
