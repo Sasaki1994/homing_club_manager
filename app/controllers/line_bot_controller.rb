@@ -140,19 +140,19 @@ class LineBotController < ApplicationController
     def recog_message(user, recog)
       if recog == 'now'
         user.update(is_last_train: false)
-        change_rich_menu(user.line_id, @@loc_richmenu_id)
+        self.class.change_rich_menu(user.line_id, @@loc_richmenu_id)
       elsif recog == 'last'
         user.update(is_last_train: true)
-        change_rich_menu(user.line_id, @@loc_richmenu_id)
+        self.class.change_rich_menu(user.line_id, @@loc_richmenu_id)
       elsif recog == 'change'
         user.update(is_last_train: true)
-        change_rich_menu(user.line_id, @@loc_richmenu_id)
+        self.class.change_rich_menu(user.line_id, @@loc_richmenu_id)
       elsif recog == 'reset'
         user.update(is_last_train: false, alert_at: nil)
-        change_rich_menu(user.line_id, @@norm_richmenu_id)
+        self.class.change_rich_menu(user.line_id, @@norm_richmenu_id)
       elsif recog == 'cancel'
         user.update(is_last_train: false)
-        change_rich_menu(user.line_id, @@norm_richmenu_id)
+        self.class.change_rich_menu(user.line_id, @@norm_richmenu_id)
       else
         puts  "認識できませんでした"
       end
