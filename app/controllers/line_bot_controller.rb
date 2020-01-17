@@ -7,6 +7,10 @@ class LineBotController < ApplicationController
     @@loc_richmenu_id =  "richmenu-88e51938cae62d1eb6f2d6861b457866"
     @@norm_richmenu_id = "richmenu-5e99b91c78df5c5307c835b5f18afbaa"
     @@alert_richmenu_id = "richmenu-80b4cc0ef167ef96ca3fef8dd76fa014"
+    @@client ||= Line::Bot::Client.new { |config|
+      config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
+      config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
+    }
     URL = "https://homing-club-manager.herokuapp.com/"
 
 
@@ -72,7 +76,7 @@ class LineBotController < ApplicationController
     end
 
     def self.change_rich_menu(line_id, richmenu_id)
-        client.link_user_rich_menu(line_id, richmenu_id)
+        @@client.link_user_rich_menu(line_id, richmenu_id)
     end
 
     def self.submit_alert
@@ -162,10 +166,10 @@ class LineBotController < ApplicationController
         body = request.body.read
         signature = request.env['HTTP_X_LINE_SIGNATURE']
         # p client.validate_signature(body, signature)
-        unless self.client.validate_signature(body, signature)
+        unless @@client.validate_signature(body, signature)
           head :BadRequest
         end
-        events = self.client.parse_events_from(body)
+        events = @@client.parse_events_from(body)
     
         events.each do |event|
         
@@ -305,7 +309,7 @@ class LineBotController < ApplicationController
 
     #linebotクライアント情報の取得
     def self.client
-        @client ||= Line::Bot::Client.new { |config|
+        @@client ||= Line::Bot::Client.new { |config|
           config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
           config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
         }
