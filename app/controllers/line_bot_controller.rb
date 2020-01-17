@@ -71,7 +71,7 @@ class LineBotController < ApplicationController
   
     end
 
-    def change_rich_menu(line_id, richmenu_id)
+    def self.change_rich_menu(line_id, richmenu_id)
         client.link_user_rich_menu(line_id, richmenu_id)
     end
 
