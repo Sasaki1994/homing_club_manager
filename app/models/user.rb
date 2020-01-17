@@ -22,7 +22,7 @@ class User < ApplicationRecord
     home_route_data = get_home_route 
     if home_route_data[:home_time] == nil
       message = "時刻検索に失敗しました\n以下のURLを開発者に報告してください。\n" + home_route_data[:url]
-    elsif @is_last_train
+    elsif is_last_train
       message  = "終電に乗るには" + home_route_data[:leave_time] + "までにはここを出ましょう。"
       message += "\n10分前にアラートします。"
       message += "\n電車遅延しているかもしれません。" if home_route_data[:accident]
@@ -38,7 +38,7 @@ class User < ApplicationRecord
 
   def get_home_route
        
-        if @is_last_train then
+        if is_last_train then
           type = 2
         else
           type = 1
@@ -70,7 +70,7 @@ class User < ApplicationRecord
         leave_time = leave_time + 3600 * 24 if leave_time < Time.current
         home_time = arrive_time + 60 * time_for_station
         alert_time = leave_time - 60 * 10
-        update(alert_at: alert_time, is_last_train: false) if type == 2
+        update(alert_at: alert_time) if type == 2
         leave_time = leave_time.strftime('%H:%M')
         alert_time = alert_time.strftime('%H:%M')
         home_time = home_time.strftime('%H:%M')

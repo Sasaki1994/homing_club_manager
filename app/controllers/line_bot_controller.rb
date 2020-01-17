@@ -36,6 +36,7 @@ class LineBotController < ApplicationController
             if user.is_last_train
                 self.class.change_rich_menu(user.line_id, @@alert_richmenu_id)
                 message = user.get_go_home_message(key_message=address)
+                user.update(is_last_train: false)
             else
                 self.class.change_rich_menu(user.line_id, @@norm_richmenu_id)
                 message = user.get_go_home_message(key_message=address)
