@@ -75,9 +75,7 @@ class LineBotController < ApplicationController
   
     end
 
-    def self.change_rich_menu(line_id, richmenu_id)
-        @@client.link_user_rich_menu(line_id, richmenu_id)
-    end
+    
 
     def self.submit_alert
         users = User.where("alert_at < ?", Time.current)
@@ -190,6 +188,9 @@ class LineBotController < ApplicationController
 
     end
 
+    def self.change_rich_menu(line_id, richmenu_id)
+      @@client.link_user_rich_menu(line_id, richmenu_id)
+    end
 
     #メッセージ送信処理
     def submit(line_id, message_text)
