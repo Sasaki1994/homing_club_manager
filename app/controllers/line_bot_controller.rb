@@ -46,31 +46,6 @@ class LineBotController < ApplicationController
 
         head :ok
     end
-
-
-    def test
-      event = get_event()
-        if event == nil
-          return head :ok
-        end
-
-        line_id = event['source']['userId']
-        user = User.find_by(line_id: line_id)
-
-
-        #会社からか現在地からかの分岐、メッセージの構築
-        if event.message['type'] == "text" then
-          text = event.message['text']
-          message = text + "でした"
-        elsif event.message['type'] == "location" then
-          
-        end
-      submit(user.line_id, message)
-
-      return head :ok
-  
-    end
-
     
 
     def self.submit_alert
@@ -219,7 +194,7 @@ class LineBotController < ApplicationController
       @@client.reply_message(reply_token, message)
     end
 
-    def multicast(user_ids, message_text)
+    def self.multicast(user_ids, message_text)
       message = {
         type: 'text',
         text: message_text
