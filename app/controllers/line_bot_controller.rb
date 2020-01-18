@@ -180,7 +180,7 @@ class LineBotController < ApplicationController
 
     def self.change_rich_menus(line_ids)
       richmenu_id = Menu.find_by(label: "norm").menu_id
-      @@client.bulk_link_rich_menus(user_ids, richmenu_id)
+      @@client.bulk_link_rich_menus(line_ids, richmenu_id)
     end
 
     #メッセージ送信処理
@@ -200,12 +200,12 @@ class LineBotController < ApplicationController
       @@client.reply_message(reply_token, message)
     end
 
-    def self.multicast(user_ids, message_text)
+    def self.multicast(line_ids, message_text)
       message = {
         type: 'text',
         text: message_text
       }
-      @@client.multicast(user_ids, message)
+      @@client.multicast(line_ids, message)
     end
 
     def self.get_rich_menu(name, type)
