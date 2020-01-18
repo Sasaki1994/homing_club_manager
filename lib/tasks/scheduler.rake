@@ -4,8 +4,12 @@ task :test_scheduler => :environment do
   puts "it works."
 end
 
-task :submit_alert => :environment do
+task :submit_alert0 => :environment do
   LineBotController.submit_alert
+end
+
+task :submit_alert1 => :environment do
+    LineBotController.submit_alert
 end
 
 task :submit_alert2 => :environment do
