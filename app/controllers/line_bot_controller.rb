@@ -3,11 +3,7 @@ class LineBotController < ApplicationController
     require 'json'
     protect_from_forgery :except => [:callback, :test]
 
-    @@regis_richmenu_id = Menu.find_by(label: "regist").menu_id
-    @@loc_richmenu_id =  Menu.find_by(label: "loc").menu_id
-    @@norm_richmenu_id = Menu.find_by(label: "norm").menu_id
-    @@alert_richmenu_id = Menu.find_by(label: "alert").menu_id
-    @@client ||= Line::Bot::Client.new { |config|
+    
       config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
       config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
     }
@@ -34,11 +30,11 @@ class LineBotController < ApplicationController
           elsif event.message['type'] == "location" then
             address = event.message['address']
             if user.is_last_train
-                self.class.change_rich_menu(user.line_id, @@alert_richmenu_id)
+                self.class.change_rich_menu(user.line_id, "alert")
                 message = user.get_go_home_message(key_message=address)
                 user.update(is_last_train: false)
             else
-                self.class.change_rich_menu(user.line_id, @@norm_richmenu_id)
+                self.class.change_rich_menu(user.line_id, "norm")
                 message = user.get_go_home_message(key_message=address)
             end
             reply(event['replyToken'], message)
@@ -143,19 +139,19 @@ class LineBotController < ApplicationController
     def recog_message(user, recog)
       if recog == 'now'
         user.update(is_last_train: false)
-        self.class.change_rich_menu(user.line_id, @@loc_richmenu_id)
+        self.class.change_rich_menu(user.line_id, "loc")
       elsif recog == 'last'
         user.update(is_last_train: true)
-        self.class.change_rich_menu(user.line_id, @@loc_richmenu_id)
+        self.class.change_rich_menu(user.line_id, "loc")
       elsif recog == 'change'
         user.update(is_last_train: true)
-        self.class.change_rich_menu(user.line_id, @@loc_richmenu_id)
+        self.class.change_rich_menu(user.line_id, "loc")
       elsif recog == 'reset'
         user.update(is_last_train: false, alert_at: nil)
-        self.class.change_rich_menu(user.line_id, @@norm_richmenu_id)
+        self.class.change_rich_menu(user.line_id, "norm")
       elsif recog == 'cancel'
         user.update(is_last_train: false)
-        self.class.change_rich_menu(user.line_id, @@norm_richmenu_id)
+        self.class.change_rich_menu(user.line_id, "norm")
       else
         puts  "認識できませんでした"
       end
@@ -191,7 +187,18 @@ class LineBotController < ApplicationController
 
     end
 
-    def self.change_rich_menu(line_id, richmenu_id)
+    def self.change_rich_menu(line_id, type)
+      case type
+      when "regist"
+        richmenu_id = Menu.find_by(label: "regist").menu_id
+      when "loc"
+        richmenu_id = Menu.find_by(label: "loc").menu_id
+      when "norm"
+        richmenu_id = Menu.find_by(label: "norm").menu_id
+      when "alert"
+        richmenu_id = Menu.find_by(label: "alert").menu_id
+      end
+     
       @@client.link_user_rich_menu(line_id, richmenu_id)
     end
 
