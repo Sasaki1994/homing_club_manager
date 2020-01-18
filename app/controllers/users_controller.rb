@@ -6,7 +6,7 @@ class UsersController < ApplicationController
     end
 
     def update
-        User.update(user_params)
+        @user.update(user_params)
         LineBotController.change_rich_menu(current_user.line_id, "richmenu-5e99b91c78df5c5307c835b5f18afbaa")
     end
 
