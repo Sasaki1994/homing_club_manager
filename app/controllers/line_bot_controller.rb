@@ -54,9 +54,10 @@ class LineBotController < ApplicationController
             user_ids = []
             users.each do |user|
                 user.update(alert_at: nil, is_last_train: false)
-                user_ids << user.line_id
+                line_ids << user.line_id
             end
-            multicast(user_ids, "終電間近です！")
+            multicast(line_ids, "終電間近です！")
+            change_rich_menus(line_ids)
         end
     end
 
@@ -175,6 +176,11 @@ class LineBotController < ApplicationController
       end
      
       @@client.link_user_rich_menu(line_id, richmenu_id)
+    end
+
+    def self.change_rich_menus(line_ids)
+      richmenu_id = Menu.find_by(label: "norm").menu_id
+      @@client.bulk_link_rich_menus(user_ids, richmenu_id)
     end
 
     #メッセージ送信処理
