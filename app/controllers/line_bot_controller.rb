@@ -81,7 +81,7 @@ class LineBotController < ApplicationController
                 user.update(alert_at: nil, is_last_train: false)
                 user_ids << user.line_id
             end
-            @@client.multicast(user_ids, "終電間近です！")
+            multicast(user_ids, "終電間近です！")
         end
     end
 
@@ -217,6 +217,14 @@ class LineBotController < ApplicationController
         text: message_text
       }
       @@client.reply_message(reply_token, message)
+    end
+
+    def multicast(user_ids, message_text)
+      message = {
+        type: 'text',
+        text: message_text
+      }
+      @@client.multicast(user_ids, message)
     end
 
     def self.get_rich_menu(name, type)
