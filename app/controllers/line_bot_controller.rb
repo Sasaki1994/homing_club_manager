@@ -51,7 +51,7 @@ class LineBotController < ApplicationController
     def self.submit_alert
         users = User.where("alert_at < ?", Time.current)
         if users.length != 0
-            user_ids = []
+            line_ids = []
             users.each do |user|
                 user.update(alert_at: nil, is_last_train: false)
                 line_ids << user.line_id
