@@ -189,13 +189,13 @@ class LineBotController < ApplicationController
 
     def self.change_rich_menu(line_id, type)
       case type
-      when "regist"
+      when "regist" then
         richmenu_id = Menu.find_by(label: "regist").menu_id
-      when "loc"
+      when "loc" then
         richmenu_id = Menu.find_by(label: "loc").menu_id
-      when "norm"
+      when "norm" then 
         richmenu_id = Menu.find_by(label: "norm").menu_id
-      when "alert"
+      when "alert" then
         richmenu_id = Menu.find_by(label: "alert").menu_id
       end
      
