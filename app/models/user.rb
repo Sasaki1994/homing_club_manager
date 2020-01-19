@@ -21,7 +21,7 @@ class User < ApplicationRecord
     @adress = key_message
     home_route_data = get_home_route 
     if home_route_data[:home_time] == nil
-      message = "時刻検索に失敗しました\n以下のURLを開発者に報告してください。\n" + home_route_data[:url]
+      message = "時刻検索に失敗しました\n現在位置を正確に送信してください。\n" + home_route_data[:url]
     elsif is_last_train
       message  = "終電に乗るには" + home_route_data[:leave_time] + "までにはここを出ましょう。"
       message += "\n5分前〜15分前にアラートします。"
